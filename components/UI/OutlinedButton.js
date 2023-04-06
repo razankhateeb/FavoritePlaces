@@ -11,7 +11,7 @@ function OutlinedButton({ icon, color, size, onPress, children }) {
     >
       <Ionicons
         name={icon}
-        color={color}
+        color={Colors.primary500}
         size={size}
         style={styles.icon}
       ></Ionicons>
