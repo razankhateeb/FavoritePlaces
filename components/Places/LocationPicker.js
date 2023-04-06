@@ -13,8 +13,8 @@ import {
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
-
-function LocationPicker() {
+import { getAddress } from "../../util/location";
+function LocationPicker({ onLocationPick }) {
   const [locationPermissionInformation, requestPermissions] =
     useForegroundPermissions(false);
   const [pickedLocation, setPickedLocation] = useState();
@@ -35,6 +35,20 @@ function LocationPicker() {
       }
     }
   }, [route, isFocused]);
+
+  useEffect(() => {
+    async function handleLocation() {
+      if (pickedLocation) {
+        const address = await getAddress(
+          pickedLocation.lat,
+          pickedLocation.lng
+        );
+        onLocationPick({ ...pickedLocation, address: address });
+      }
+    }
+    handleLocation();
+  }, [pickedLocation, onLocationPick]);
+
   async function verifyPermissions() {
     if (
       locationPermissionInformation.status === PermissionStatus.UNDETERMINED
@@ -63,9 +77,11 @@ function LocationPicker() {
       lng: location.coords.longitude,
     });
   }
+
   function pickOnMapHandler() {
     navigation.navigate("Map");
   }
+
   let locationPreview = <Text>No Map Preview Available</Text>;
 
   if (pickedLocation) {

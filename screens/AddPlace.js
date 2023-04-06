@@ -1,8 +1,14 @@
 import React from "react";
 import PlaceForm from "../components/Places/PlaceForm";
+import { insertPlace } from "../util/database";
 
-function AddPlace() {
-  return <PlaceForm />;
+function AddPlace({ navigation }) {
+  async function savePlaceHandler(place) {
+    await insertPlace(place);
+    console.log("done");
+    navigation.navigate("allPlaces");
+  }
+  return <PlaceForm onSavePlace={savePlaceHandler} />;
 }
 
 export default AddPlace;

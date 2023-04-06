@@ -8,7 +8,7 @@ import {
 import OutlinedButton from "../UI/OutlinedButton";
 import { Colors } from "../../constants/Colors";
 
-function ImagePicker() {
+function ImagePicker({ onImageTaken }) {
   const [cameraPermissionsInformation, requestPermissions] =
     useCameraPermissions();
 
@@ -17,16 +17,20 @@ function ImagePicker() {
   async function verifyPermissions() {
     if (cameraPermissionsInformation.status === PermissionStatus.UNDETERMINED) {
       const permissionResponse = await requestPermissions();
+
       return permissionResponse.granted;
     }
+
     if (cameraPermissionsInformation.status === PermissionStatus.DENIED) {
       Alert.alert(
-        "Insufficient Permissions",
-        "you need to grant camera permissions for this app"
+        "Insufficient Permissions!",
+        "You need to grant camera permissions to use this app."
       );
       return false;
     }
-    return true;
+    if (cameraPermissionsInformation.status === PermissionStatus.GRANTED) {
+      return true;
+    }
   }
 
   async function takeImageHandler() {
@@ -41,8 +45,8 @@ function ImagePicker() {
       aspect: [16, 9],
       quality: 0.5,
     });
-
     setPickedImage(image.uri);
+    onImageTaken(image.uri);
   }
 
   let imagePreview = <Text>No Image was Taken</Text>;
